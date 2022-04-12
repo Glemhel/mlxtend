@@ -8,7 +8,7 @@ import itertools
 from ..frequent_patterns import fpcommon as fpc
 
 
-def fpgrowth(df, min_support=0.5, use_colnames=False, max_len=None, verbose=0):
+def fpgrowth(df, min_support=0.5, use_colnames=False, max_len=None, verbose=0, print_tree=False):
     """Get frequent itemsets from a one-hot DataFrame
 
     Parameters
@@ -70,7 +70,6 @@ def fpgrowth(df, min_support=0.5, use_colnames=False, max_len=None, verbose=0):
 
     """
     fpc.valid_input_check(df)
-    print('!Hello from Glemhel!')
     if min_support <= 0.:
         raise ValueError('`min_support` must be a positive '
                          'number within the interval `(0, 1]`. '
@@ -84,7 +83,9 @@ def fpgrowth(df, min_support=0.5, use_colnames=False, max_len=None, verbose=0):
     minsup = math.ceil(min_support * len(df.index))  # min support as count
     generator = fpg_step(tree, minsup, colname_map, max_len, verbose)
 
-    tree.print_tree()
+    if print_tree:
+      tree.print_tree()
+  
     return fpc.generate_itemsets(generator, len(df.index), colname_map)
 
 
