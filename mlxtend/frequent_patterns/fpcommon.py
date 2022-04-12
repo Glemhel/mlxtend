@@ -1,4 +1,4 @@
-from curses import delay_output
+# from curses import delay_output
 import numpy as np
 import pandas as pd
 import collections
@@ -214,18 +214,23 @@ class FPTree(object):
         print('\r%d itemset(s) from tree conditioned on items (%s)' %
               (count, cond_items), end="\n")
     
-    def print_tree(self, depth_limit=5):
+    def print_tree(self, colname_map, *, depth_limit=3, max_children=3):
         tree_graph = pydot.Dot('FPtree_graph', graph_type='graph', bgcolor='white')
         
         uid = 0
         def traverse_tree(node, depth):
+            nonlocal uid
             if depth > depth_limit:
                 return None
             node_id = uid
-            tree_graph.add_node(pydot.Node(uid, label=node.item, shape='circle'))
+            node_label = 'root' if node.item is None else colname_map[node.item].lower()
+            tree_graph.add_node(pydot.Node(uid, label=node_label, shape='circle'))
             uid += 1
-            for item in node.children:
-                child = node.children[item]
+
+            children_nodes = list(node.children.values())
+            children_sort = list(np.argsort([x.count for x in children_nodes]))[-1:-(max_children+1):-1]
+            for x in children_sort:
+                child = children_nodes[x]
                 child_id = traverse_tree(child, depth + 1)
                 if depth + 1 <= depth_limit:
                     tree_graph.add_edge(pydot.Edge(node_id, child_id, color='black'))
@@ -233,7 +238,9 @@ class FPTree(object):
 
         node = self.root
         traverse_tree(node, 0)
-        tree_graph.write_png('graph.png')
+        # with open("tree-graph.dot", "w") as text_file:
+        #     text_file.write(tree_graph.to_string())
+        tree_graph.write_svg('graph.svg')
 
 
 class FPNode(object):

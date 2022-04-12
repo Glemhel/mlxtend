@@ -84,7 +84,7 @@ def fpgrowth(df, min_support=0.5, use_colnames=False, max_len=None, verbose=0, p
     generator = fpg_step(tree, minsup, colname_map, max_len, verbose)
 
     if print_tree:
-      tree.print_tree()
+      tree.print_tree(colname_map)
   
     return fpc.generate_itemsets(generator, len(df.index), colname_map)
 
