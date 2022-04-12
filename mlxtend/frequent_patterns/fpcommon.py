@@ -1,6 +1,8 @@
+from curses import delay_output
 import numpy as np
 import pandas as pd
 import collections
+import pydot
 from distutils.version import LooseVersion as Version
 from pandas import __version__ as pandas_version
 
@@ -212,16 +214,26 @@ class FPTree(object):
         print('\r%d itemset(s) from tree conditioned on items (%s)' %
               (count, cond_items), end="\n")
     
-    def print_tree(self, depth_limit=5, *, node=None, depth=0):
-        if depth > depth_limit:
-            return
-        index = 0
-        if node is None:
-            node = self.root
-        print(' ' * depth, node.item)
-        for item in node.children:
-            child = node.children[item]
-            self.print_tree(node=child, depth=depth + 1)
+    def print_tree(self, depth_limit=5):
+        tree_graph = pydot.Dot('FPtree_graph', graph_type='graph', bgcolor='white')
+        
+        uid = 0
+        def traverse_tree(node, depth):
+            if depth > depth_limit:
+                return None
+            node_id = uid
+            tree_graph.add_node(pydot.Node(uid, label=node.item, shape='circle'))
+            uid += 1
+            for item in node.children:
+                child = node.children[item]
+                child_id = traverse_tree(child, depth + 1)
+                if depth + 1 <= depth_limit:
+                    tree_graph.add_edge(pydot.Edge(node_id, child_id, color='black'))
+            return node_id
+
+        node = self.root
+        traverse_tree(node, 0)
+        tree_graph.write_png('graph.png')
 
 
 class FPNode(object):
