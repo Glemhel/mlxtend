@@ -212,7 +212,9 @@ class FPTree(object):
         print('\r%d itemset(s) from tree conditioned on items (%s)' %
               (count, cond_items), end="\n")
     
-    def print_tree(self, *, node=None, depth=0):
+    def print_tree(self, depth_limit=5, *, node=None, depth=0):
+        if depth > depth_limit:
+            return
         index = 0
         if node is None:
             node = self.root
