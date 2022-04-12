@@ -4,3 +4,4 @@ pandas>=0.24.2
 scikit-learn>=1.0.2
 matplotlib>=3.0.0
 joblib>=0.13.2
+treelib>=1.5
