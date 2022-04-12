@@ -84,6 +84,7 @@ def fpgrowth(df, min_support=0.5, use_colnames=False, max_len=None, verbose=0):
     minsup = math.ceil(min_support * len(df.index))  # min support as count
     generator = fpg_step(tree, minsup, colname_map, max_len, verbose)
 
+    tree.print_tree()
     return fpc.generate_itemsets(generator, len(df.index), colname_map)
 
 

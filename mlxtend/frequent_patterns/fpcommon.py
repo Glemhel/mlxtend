@@ -211,6 +211,15 @@ class FPTree(object):
         cond_items = ", ".join(cond_items)
         print('\r%d itemset(s) from tree conditioned on items (%s)' %
               (count, cond_items), end="\n")
+    
+    def print_tree(self, *, node=None, depth=0):
+        index = 0
+        if node is None:
+            node = self.root
+        print(' ' * depth, node.item)
+        for item in node.children:
+            child = node.children[item]
+            self.print_tree(node=child, depth=depth + 1)
 
 
 class FPNode(object):
